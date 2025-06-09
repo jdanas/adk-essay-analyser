@@ -15,3 +15,11 @@ export interface EssayData {
   source: 'upload' | 'paste';
   filename?: string;
 }
+
+export interface EssayAnalysisResponse {
+  grammarFeedback: string;
+  structureFeedback: string;
+  contentFeedback: string;
+  spellingFeedback: string;
+  overallScore: number;
+}
