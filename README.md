@@ -3,6 +3,7 @@
 ## Overview
 
 This project implements a complete essay analysis system that combines:
+
 - **TypeScript/Node.js API** for the backend service
 - **Python agent** using Google's ADK Python SDK with Gemini 2.5 Flash Preview
 - **React frontend** components for seamless integration
@@ -37,6 +38,7 @@ pnpm run docker:up     # Start all services
 ```
 
 **Access your application:**
+
 - **Frontend**: http://localhost:5173
 - **Express API**: http://localhost:3001
 - **ADK API**: http://localhost:8000
@@ -47,11 +49,13 @@ pnpm run docker:up     # Start all services
 For local development without Docker:
 
 1. **Run the setup script:**
+
    ```bash
    ./setup.sh
    ```
 
 2. **Configure your Google API key:**
+
    ```bash
    # Edit the .env file
    GOOGLE_API_KEY=your_actual_api_key_here
@@ -65,10 +69,11 @@ For local development without Docker:
 ### Manual Setup
 
 1. **Install dependencies:**
+
    ```bash
    # Node.js dependencies
    pnpm install
-   
+
    # Python dependencies
    python3 -m venv venv
    source venv/bin/activate
@@ -76,16 +81,18 @@ For local development without Docker:
    ```
 
 2. **Environment configuration:**
+
    ```bash
    cp .env.example .env
    # Edit .env with your Google API key
    ```
 
 3. **Start services:**
+
    ```bash
    # API server (development)
    pnpm run server:dev
-   
+
    # Frontend (if running separately)
    pnpm run dev
    ```
@@ -95,6 +102,7 @@ For local development without Docker:
 ### Endpoint: `POST /api/analyze-essay`
 
 **Request:**
+
 ```json
 {
   "text": "Your essay text here..."
@@ -102,6 +110,7 @@ For local development without Docker:
 ```
 
 **Response:**
+
 ```json
 {
   "grammarFeedback": "Detailed grammar analysis and suggestions...",
@@ -113,6 +122,7 @@ For local development without Docker:
 ```
 
 **Error Response:**
+
 ```json
 {
   "error": "Error description",
@@ -129,19 +139,19 @@ Returns service status and basic information.
 ### Using the EssayAnalyzer Component
 
 ```tsx
-import { EssayAnalyzer } from '@/components/EssayAnalyzer';
-import { EssayAnalysisResponse } from '@/types';
+import { EssayAnalyzer } from "@/components/EssayAnalyzer";
+import { EssayAnalysisResponse } from "@/types";
 
 function MyComponent() {
-  const [essayText, setEssayText] = useState('');
-  
+  const [essayText, setEssayText] = useState("");
+
   const handleAnalysisComplete = (result: EssayAnalysisResponse) => {
-    console.log('Analysis completed:', result);
+    console.log("Analysis completed:", result);
     // Handle the analysis results
   };
 
   return (
-    <EssayAnalyzer 
+    <EssayAnalyzer
       essayText={essayText}
       onAnalysisComplete={handleAnalysisComplete}
     />
@@ -152,7 +162,7 @@ function MyComponent() {
 ### Custom Integration
 
 ```tsx
-import { essayAnalysisService } from '@/services/essayAnalysisService';
+import { essayAnalysisService } from "@/services/essayAnalysisService";
 
 // Direct service usage
 const result = await essayAnalysisService.analyzeEssay(essayText);
@@ -192,10 +202,10 @@ const result = await analyzeEssay(essayText);
 
 ### Environment Variables
 
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `GOOGLE_API_KEY` | Google AI API key for Gemini access | ✅ |
-| `PORT` | API server port (default: 3001) | ❌ |
+| Variable         | Description                         | Required |
+| ---------------- | ----------------------------------- | -------- |
+| `GOOGLE_API_KEY` | Google AI API key for Gemini access | ✅       |
+| `PORT`           | API server port (default: 3001)     | ❌       |
 
 ### Python Dependencies
 
@@ -257,15 +267,18 @@ npx tsx src/utils/testClient.ts
 ### Common Issues
 
 1. **"Import google.adk could not be resolved"**
+
    - Ensure virtual environment is activated
    - Run `pip install google-adk python-dotenv`
 
 2. **"Python process exited with code 1"**
+
    - Check your Google API key in `.env`
    - Verify virtual environment setup
    - Check Python script permissions
 
 3. **"CORS error" in browser**
+
    - Ensure API server is running on port 3001
    - Check CORS configuration in `api.ts`
 
@@ -276,6 +289,7 @@ npx tsx src/utils/testClient.ts
 ### Debug Mode
 
 Enable debug logging:
+
 ```bash
 DEBUG=* pnpm run server:dev
 ```
@@ -320,24 +334,24 @@ We've included comprehensive Docker support with npm scripts for easy management
 
 ### Docker Commands
 
-| Command | Description |
-|---------|-------------|
-| `pnpm run docker:setup` | Copy environment file and setup permissions |
-| `pnpm run docker:deploy` | Run the full automated deployment script |
-| `pnpm run docker:up` | Start all services with Docker Compose |
-| `pnpm run docker:down` | Stop all Docker services |
-| `pnpm run docker:logs` | View live logs from all services |
-| `pnpm run docker:restart` | Restart all services |
-| `pnpm run docker:ps` | Show status of all containers |
-| `pnpm run docker:health` | Check health of all services |
-| `pnpm run docker:clean` | Remove all containers, volumes, and images |
+| Command                   | Description                                 |
+| ------------------------- | ------------------------------------------- |
+| `pnpm run docker:setup`   | Copy environment file and setup permissions |
+| `pnpm run docker:deploy`  | Run the full automated deployment script    |
+| `pnpm run docker:up`      | Start all services with Docker Compose      |
+| `pnpm run docker:down`    | Stop all Docker services                    |
+| `pnpm run docker:logs`    | View live logs from all services            |
+| `pnpm run docker:restart` | Restart all services                        |
+| `pnpm run docker:ps`      | Show status of all containers               |
+| `pnpm run docker:health`  | Check health of all services                |
+| `pnpm run docker:clean`   | Remove all containers, volumes, and images  |
 
 ### Docker Services
 
 The application runs as three containerized services:
 
 1. **Frontend** (React + Vite) - Port 5173
-2. **API Server** (Express.js) - Port 3001  
+2. **API Server** (Express.js) - Port 3001
 3. **ADK API** (Python + FastAPI) - Port 8000
 
 ### Environment Configuration

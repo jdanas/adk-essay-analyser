@@ -10,12 +10,14 @@ This guide helps you deploy the ADK Essay Analyzer using Docker for a complete c
 ## 🚀 Quick Start
 
 ### 1. Clone and Setup
+
 ```bash
 git clone <your-repo>
 cd adk-essay-analyser
 ```
 
 ### 2. Configure Environment
+
 ```bash
 # Copy environment template
 cp .env.docker .env
@@ -25,6 +27,7 @@ echo "GOOGLE_GENAI_API_KEY=your_actual_api_key_here" > .env
 ```
 
 ### 3. Deploy with Docker
+
 ```bash
 # Make deployment script executable
 chmod +x docker-deploy.sh
@@ -70,11 +73,13 @@ Once deployed, access your application at:
 ### Services:
 
 1. **Frontend** (`frontend` service)
+
    - React app with Vite dev server
    - Hot reload enabled for development
    - Port: 5173
 
 2. **Express API** (`api-server` service)
+
    - TypeScript Express.js proxy server
    - Handles CORS and request routing
    - Port: 3001
@@ -89,6 +94,7 @@ Once deployed, access your application at:
 ### Common Issues
 
 **1. Port Already in Use**
+
 ```bash
 # Check what's using the ports
 lsof -i :5173
@@ -100,12 +106,14 @@ docker-compose down
 ```
 
 **2. API Key Issues**
+
 ```bash
 # Check if API key is set
 docker-compose logs adk-api | grep -i "api key\|auth"
 ```
 
 **3. Service Health Checks**
+
 ```bash
 # Check individual service health
 curl http://localhost:8000/health  # ADK API
@@ -114,6 +122,7 @@ curl http://localhost:5173  # Frontend
 ```
 
 **4. View Detailed Logs**
+
 ```bash
 # All services
 docker-compose logs -f
@@ -125,6 +134,7 @@ docker-compose logs -f frontend
 ```
 
 ### Reset Everything
+
 ```bash
 # Complete reset (removes all containers, volumes, and images)
 docker-compose down -v --rmi all
@@ -136,10 +146,12 @@ docker system prune -a -f
 ### Making Changes
 
 **Frontend Changes:**
+
 - Files are mounted as volumes
 - Changes auto-reload in development
 
 **Backend Changes:**
+
 ```bash
 # Rebuild specific service
 docker-compose up --build adk-api -d
@@ -158,6 +170,7 @@ curl -X POST http://localhost:3001/api/analyze-essay \
 ## 📊 Monitoring
 
 ### Resource Usage
+
 ```bash
 # Check container stats
 docker stats
@@ -167,6 +180,7 @@ docker-compose ps
 ```
 
 ### Performance
+
 ```bash
 # Check container resource usage
 docker-compose top
@@ -177,16 +191,19 @@ docker-compose top
 For production deployment:
 
 1. **Environment Variables**
+
    - Use Docker secrets for API keys
    - Set proper CORS origins
    - Configure logging levels
 
 2. **Networking**
+
    - Use reverse proxy (nginx)
    - Enable HTTPS
    - Restrict port access
 
 3. **Scaling**
+
    - Use Docker Swarm or Kubernetes
    - Add load balancing
    - Implement health checks
