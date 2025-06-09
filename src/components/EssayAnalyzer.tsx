@@ -1,23 +1,33 @@
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2, CheckCircle, XCircle } from 'lucide-react';
-import { EssayAnalysisResponse } from '@/types';
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Loader2, CheckCircle, XCircle } from "lucide-react";
+import { EssayAnalysisResponse } from "@/types";
 
 interface EssayAnalyzerProps {
   essayText: string;
   onAnalysisComplete: (result: EssayAnalysisResponse) => void;
 }
 
-export function EssayAnalyzer({ essayText, onAnalysisComplete }: EssayAnalyzerProps) {
+export function EssayAnalyzer({
+  essayText,
+  onAnalysisComplete,
+}: EssayAnalyzerProps) {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [lastAnalysis, setLastAnalysis] = useState<EssayAnalysisResponse | null>(null);
+  const [lastAnalysis, setLastAnalysis] =
+    useState<EssayAnalysisResponse | null>(null);
 
   const analyzeEssay = async () => {
     if (!essayText || essayText.trim().length === 0) {
-      setError('Please provide essay text to analyze');
+      setError("Please provide essay text to analyze");
       return;
     }
 
@@ -25,24 +35,32 @@ export function EssayAnalyzer({ essayText, onAnalysisComplete }: EssayAnalyzerPr
     setError(null);
 
     try {
-      const response = await fetch('/api/analyze-essay', {
-        method: 'POST',
+      const response = await fetch("http://localhost:3001/api/analyze-essay", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ text: essayText }),
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
+        // Try to get error details, but handle case where response is not JSON
+        let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error || errorMessage;
+        } catch {
+          // Response is not JSON, use status text
+        }
+        throw new Error(errorMessage);
       }
 
-      const result = await response.json() as EssayAnalysisResponse;
+      const result = (await response.json()) as EssayAnalysisResponse;
       setLastAnalysis(result);
       onAnalysisComplete(result);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Analysis failed';
+      const errorMessage =
+        err instanceof Error ? err.message : "Analysis failed";
       setError(errorMessage);
     } finally {
       setIsAnalyzing(false);
@@ -57,7 +75,8 @@ export function EssayAnalyzer({ essayText, onAnalysisComplete }: EssayAnalyzerPr
           {lastAnalysis && <CheckCircle className="h-5 w-5 text-green-500" />}
         </CardTitle>
         <CardDescription>
-          Analyze your essay with AI-powered feedback using Google's Gemini model
+          Analyze your essay with AI-powered feedback using Google's Gemini
+          model
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -67,13 +86,13 @@ export function EssayAnalyzer({ essayText, onAnalysisComplete }: EssayAnalyzerPr
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
-        
+
         <div className="flex items-center justify-between">
           <div className="text-sm text-muted-foreground">
             Essay length: {essayText.length.toLocaleString()} characters
           </div>
-          <Button 
-            onClick={analyzeEssay} 
+          <Button
+            onClick={analyzeEssay}
             disabled={isAnalyzing || !essayText.trim()}
             className="min-w-[120px]"
           >
@@ -83,7 +102,7 @@ export function EssayAnalyzer({ essayText, onAnalysisComplete }: EssayAnalyzerPr
                 Analyzing...
               </>
             ) : (
-              'Analyze Essay'
+              "Analyze Essay"
             )}
           </Button>
         </div>
@@ -96,26 +115,42 @@ export function EssayAnalyzer({ essayText, onAnalysisComplete }: EssayAnalyzerPr
                 {lastAnalysis.overallScore}/100
               </div>
             </div>
-            
+
             <div className="grid gap-3">
               <div className="space-y-1">
-                <h5 className="text-sm font-medium text-green-700">Grammar Feedback</h5>
-                <p className="text-sm text-muted-foreground">{lastAnalysis.grammarFeedback}</p>
+                <h5 className="text-sm font-medium text-green-700">
+                  Grammar Feedback
+                </h5>
+                <p className="text-sm text-muted-foreground">
+                  {lastAnalysis.grammarFeedback}
+                </p>
               </div>
-              
+
               <div className="space-y-1">
-                <h5 className="text-sm font-medium text-blue-700">Structure Feedback</h5>
-                <p className="text-sm text-muted-foreground">{lastAnalysis.structureFeedback}</p>
+                <h5 className="text-sm font-medium text-blue-700">
+                  Structure Feedback
+                </h5>
+                <p className="text-sm text-muted-foreground">
+                  {lastAnalysis.structureFeedback}
+                </p>
               </div>
-              
+
               <div className="space-y-1">
-                <h5 className="text-sm font-medium text-purple-700">Content Feedback</h5>
-                <p className="text-sm text-muted-foreground">{lastAnalysis.contentFeedback}</p>
+                <h5 className="text-sm font-medium text-purple-700">
+                  Content Feedback
+                </h5>
+                <p className="text-sm text-muted-foreground">
+                  {lastAnalysis.contentFeedback}
+                </p>
               </div>
-              
+
               <div className="space-y-1">
-                <h5 className="text-sm font-medium text-orange-700">Spelling Feedback</h5>
-                <p className="text-sm text-muted-foreground">{lastAnalysis.spellingFeedback}</p>
+                <h5 className="text-sm font-medium text-orange-700">
+                  Spelling Feedback
+                </h5>
+                <p className="text-sm text-muted-foreground">
+                  {lastAnalysis.spellingFeedback}
+                </p>
               </div>
             </div>
           </div>
