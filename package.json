@@ -13,7 +13,7 @@
     "build:server": "tsc src/server/api.ts --outDir dist --target es2020 --module commonjs",
     "start:server": "node dist/server/api.js",
     "docker:setup": "cp .env.docker .env && chmod +x docker-deploy.sh",
-    "docker:up": "docker-compose up --build -d",
+    "start-all": "docker-compose up --build -d",
     "docker:down": "docker-compose down",
     "docker:logs": "docker-compose logs -f",
     "docker:restart": "docker-compose restart",
