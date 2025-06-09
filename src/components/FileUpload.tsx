@@ -1,9 +1,9 @@
-import { useCallback, useState } from 'react';
-import { Upload, FileText, X } from 'lucide-react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { extractTextFromPDF } from '@/utils/pdfParser';
-import { cn } from '@/lib/utils';
+import { useCallback, useState } from "react";
+import { Upload, FileText, X } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { extractTextFromPDF } from "@/utils/pdfParser";
+import { cn } from "@/lib/utils";
 
 interface FileUploadProps {
   onFileProcessed: (content: string, filename: string) => void;
@@ -15,55 +15,68 @@ export function FileUpload({ onFileProcessed, onError }: FileUploadProps) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
-  const processFile = useCallback(async (file: File) => {
-    if (!file.type.includes('pdf')) {
-      onError('Please upload a PDF file');
-      return;
-    }
-
-    setIsProcessing(true);
-    setUploadedFile(file);
-
-    try {
-      const content = await extractTextFromPDF(file);
-      if (!content.trim()) {
-        throw new Error('No text found in PDF');
+  const processFile = useCallback(
+    async (file: File) => {
+      if (!file.type.includes("pdf")) {
+        onError("Please upload a PDF file");
+        return;
       }
-      onFileProcessed(content, file.name);
-    } catch (error) {
-      onError('Failed to process PDF file. Please try again.');
-      setUploadedFile(null);
-    } finally {
-      setIsProcessing(false);
-    }
-  }, [onFileProcessed, onError]);
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragOver(false);
-    
-    const files = Array.from(e.dataTransfer.files);
-    if (files.length > 0) {
-      processFile(files[0]);
-    }
-  }, [processFile]);
+      setIsProcessing(true);
+      setUploadedFile(file);
 
-  const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files && files.length > 0) {
-      processFile(files[0]);
-    }
-  }, [processFile]);
+      try {
+        const content = await extractTextFromPDF(file);
+        if (!content.trim()) {
+          throw new Error("No text found in PDF");
+        }
+        onFileProcessed(content, file.name);
+        //TODO : fix linting
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (error) {
+        onError("Failed to process PDF file. Please try again.");
+        setUploadedFile(null);
+      } finally {
+        setIsProcessing(false);
+      }
+    },
+    [onFileProcessed, onError]
+  );
+
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      setIsDragOver(false);
+
+      const files = Array.from(e.dataTransfer.files);
+      if (files.length > 0) {
+        processFile(files[0]);
+      }
+    },
+    [processFile]
+  );
+
+  const handleFileSelect = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const files = e.target.files;
+      if (files && files.length > 0) {
+        processFile(files[0]);
+      }
+    },
+    [processFile]
+  );
 
   const clearFile = () => {
     setUploadedFile(null);
   };
 
   return (
-    <Card className={cn(
-      "border-2 border-dashed border-gray-300 rounded-2xl transition-all duration-300",
-      isDragOver && "border-gray-400 bg-gray-50"
-    )}>
+    <Card
+      className={cn(
+        "border-2 border-dashed border-gray-300 rounded-2xl transition-all duration-300",
+        isDragOver && "border-gray-400 bg-gray-50"
+      )}
+    >
       <div
         className="p-12 text-center"
         onDrop={handleDrop}
@@ -117,9 +130,9 @@ export function FileUpload({ onFileProcessed, onError }: FileUploadProps) {
                 className="hidden"
                 id="file-upload"
               />
-              <Button 
-                asChild 
-                variant="outline" 
+              <Button
+                asChild
+                variant="outline"
                 className="border-gray-300 hover:bg-gray-50 rounded-xl transition-all duration-300"
               >
                 <label htmlFor="file-upload" className="cursor-pointer">
