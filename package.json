@@ -11,7 +11,16 @@
     "server": "tsx src/server/api.ts",
     "server:dev": "tsx watch src/server/api.ts",
     "build:server": "tsc src/server/api.ts --outDir dist --target es2020 --module commonjs",
-    "start:server": "node dist/server/api.js"
+    "start:server": "node dist/server/api.js",
+    "docker:setup": "cp .env.docker .env && chmod +x docker-deploy.sh",
+    "docker:up": "docker-compose up --build -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "docker:restart": "docker-compose restart",
+    "docker:clean": "docker-compose down -v --rmi all",
+    "docker:deploy": "./docker-deploy.sh",
+    "docker:ps": "docker-compose ps",
+    "docker:health": "curl -s http://localhost:8000/health && curl -s http://localhost:3001/api/health && curl -s http://localhost:5173"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
