@@ -1,0 +1,66 @@
+services:
+  # ADK API Server (Python)
+  adk-api:
+    build:
+      context: .
+      dockerfile: Dockerfile.adk
+    ports:
+      - "8000:8000"
+    environment:
+      - GOOGLE_GENAI_API_KEY=${GOOGLE_GENAI_API_KEY}
+      - GOOGLE_API_KEY=${GOOGLE_GENAI_API_KEY}
+      - PORT=8000
+      - HOST=0.0.0.0
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - essay-analyzer-network
+    restart: unless-stopped
+
+  # Express.js API Server (TypeScript)
+  api-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - ADK_API_URL=http://adk-api:8000
+    depends_on:
+      adk-api:
+        condition: service_healthy
+    networks:
+      - essay-analyzer-network
+    restart: unless-stopped
+
+  # React Frontend (Vite)
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:3001
+    depends_on:
+      - api-server
+    networks:
+      - essay-analyzer-network
+    restart: unless-stopped
+    volumes:
+      - ./src:/app/src
+      - ./public:/app/public
+
+networks:
+  essay-analyzer-network:
+    driver: bridge
+
+volumes:
+  node_modules:

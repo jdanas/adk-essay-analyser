@@ -1,0 +1,23 @@
+# Express.js API Dockerfile
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Copy package files
+COPY package.json pnpm-lock.yaml ./
+
+# Install pnpm and dependencies
+RUN npm install -g pnpm
+RUN pnpm install
+
+# Copy source code
+COPY . .
+
+# Build TypeScript if needed
+RUN pnpm run build:server || echo "No build script found"
+
+# Expose port for Express API
+EXPOSE 3001
+
+# Start the Express API server
+CMD ["pnpm", "run", "server:dev"]

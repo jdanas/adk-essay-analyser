@@ -7,43 +7,44 @@ This project implements a complete essay analysis system that combines:
 - **Python agent** using Google's ADK Python SDK with Gemini 2.5 Flash Preview
 - **React frontend** components for seamless integration
 - **Model Context Protocol (MCP)** for robust AI agent execution
+- **Docker containerization** for easy deployment and development
 
 ## Architecture
 
 ```
 ┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
 │   React Client  │───▶│  TypeScript API  │───▶│  Python Agent  │
-│                 │    │   (FastAPI)   │    │  (Google ADK)   │
+│                 │    │   (Fast API)   │    │  (Google ADK)   │
 │  - EssayAnalyzer│    │  - Input validation│    │  - MCP Context  │
 │  - UI Components│    │  - Process mgmt  │    │  - Gemini Model │
 │  - State mgmt   │    │  - Error handling│    │  - JSON Response│
 └─────────────────┘    └──────────────────┘    └─────────────────┘
 ```
 
-## Key Features
+## 🚀 Quick Start
 
-### 🤖 AI-Powered Analysis
-- **Gemini 2.5 Flash Preview** model for high-quality analysis
-- **Comprehensive feedback** across 4 dimensions: Grammar, Structure, Content, Spelling
-- **Numerical scoring** from 0-100 for overall quality
-- **Structured JSON responses** for easy integration
+### Option 1: Docker Deployment (Recommended)
 
-### 🔧 Robust Implementation
-- **TypeScript safety** with proper error handling
-- **Process isolation** between Node.js and Python
-- **Timeout management** (60s) for reliable performance
-- **Input validation** and sanitization
-- **Comprehensive logging** for debugging
+The easiest way to get everything running:
 
-### 🎨 Frontend Integration
-- **React components** ready for integration
-- **Loading states** and error handling
-- **Real-time feedback** display
-- **Responsive design** with Tailwind CSS
+```bash
+# Quick deployment with npm scripts
+pnpm run docker:deploy
 
-## Setup Instructions
+# OR manual Docker commands
+pnpm run docker:setup  # Copy environment file
+pnpm run docker:up     # Start all services
+```
 
-### Quick Start
+**Access your application:**
+- **Frontend**: http://localhost:5173
+- **Express API**: http://localhost:3001
+- **ADK API**: http://localhost:8000
+- **API Docs**: http://localhost:8000/docs
+
+### Option 2: Development Setup
+
+For local development without Docker:
 
 1. **Run the setup script:**
    ```bash
@@ -312,6 +313,72 @@ pnpm run start:server
 - **Caching**: Cache analysis results for identical essays
 - **Rate limiting**: Prevent API abuse
 - **Monitoring**: Track performance and errors
+
+## 🐳 Docker Management
+
+We've included comprehensive Docker support with npm scripts for easy management:
+
+### Docker Commands
+
+| Command | Description |
+|---------|-------------|
+| `pnpm run docker:setup` | Copy environment file and setup permissions |
+| `pnpm run docker:deploy` | Run the full automated deployment script |
+| `pnpm run docker:up` | Start all services with Docker Compose |
+| `pnpm run docker:down` | Stop all Docker services |
+| `pnpm run docker:logs` | View live logs from all services |
+| `pnpm run docker:restart` | Restart all services |
+| `pnpm run docker:ps` | Show status of all containers |
+| `pnpm run docker:health` | Check health of all services |
+| `pnpm run docker:clean` | Remove all containers, volumes, and images |
+
+### Docker Services
+
+The application runs as three containerized services:
+
+1. **Frontend** (React + Vite) - Port 5173
+2. **API Server** (Express.js) - Port 3001  
+3. **ADK API** (Python + FastAPI) - Port 8000
+
+### Environment Configuration
+
+```bash
+# Copy the Docker environment template
+cp .env.docker .env
+
+# Edit with your API key
+GOOGLE_GENAI_API_KEY=your_actual_api_key_here
+```
+
+### Development with Docker
+
+```bash
+# Start everything for development
+pnpm run docker:up
+
+# Watch logs in real-time
+pnpm run docker:logs
+
+# Make changes to frontend (auto-reloads)
+# Frontend files are mounted as volumes
+
+# Restart specific services after backend changes
+docker-compose restart adk-api
+docker-compose restart api-server
+```
+
+### Production Deployment
+
+```bash
+# Full production deployment
+pnpm run docker:deploy
+
+# Check service health
+pnpm run docker:health
+
+# Monitor with logs
+pnpm run docker:logs
+```
 
 ## Contributing
 
