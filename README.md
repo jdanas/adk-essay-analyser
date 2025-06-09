@@ -13,7 +13,7 @@ This project implements a complete essay analysis system that combines:
 ```
 ┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
 │   React Client  │───▶│  TypeScript API  │───▶│  Python Agent  │
-│                 │    │   (Express.js)   │    │  (Google ADK)   │
+│                 │    │   (FastAPI)   │    │  (Google ADK)   │
 │  - EssayAnalyzer│    │  - Input validation│    │  - MCP Context  │
 │  - UI Components│    │  - Process mgmt  │    │  - Gemini Model │
 │  - State mgmt   │    │  - Error handling│    │  - JSON Response│
