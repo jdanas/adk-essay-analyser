@@ -3,18 +3,37 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-# Copy package files
+# Copy package files first for better Docker layer caching
 COPY package.json pnpm-lock.yaml ./
 
 # Install pnpm and dependencies
 RUN npm install -g pnpm
 RUN pnpm install
 
-# Copy source code
-COPY . .
+# Copy configuration files first
+COPY tsconfig*.json ./
+COPY vite.config.ts ./
+COPY tailwind.config.js ./
+COPY postcss.config.js ./
+COPY components.json ./
+COPY eslint.config.js ./
+
+# Copy index.html
+COPY index.html ./
+
+# Copy source directories
+COPY src/ ./src/
+COPY public/ ./public/
+
+# Build CSS to ensure Tailwind is properly compiled
+RUN pnpm run build:css || echo "No build:css script, using dev mode"
 
 # Expose port for Vite dev server
 EXPOSE 5173
 
-# Start the development server
-CMD ["pnpm", "run", "dev", "--host", "0.0.0.0"]
+# Set environment variables for better performance
+ENV NODE_ENV=development
+ENV VITE_HMR_PORT=5173
+
+# Start the development server with proper host binding
+CMD ["pnpm", "run", "dev", "--host", "0.0.0.0", "--port", "5173"]
