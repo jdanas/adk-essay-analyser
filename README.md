@@ -1,7 +1,5 @@
 # Essay Analyzer with Google ADK Integration
 
-![Essay Analyzer with Google ADK Integration](essay-adk-screenshot.png)
-
 ## Overview
 
 This project implements a complete essay analysis system that combines:
