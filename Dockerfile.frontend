@@ -10,20 +10,8 @@ COPY package.json pnpm-lock.yaml ./
 RUN npm install -g pnpm
 RUN pnpm install
 
-# Copy configuration files first
-COPY tsconfig*.json ./
-COPY vite.config.ts ./
-COPY tailwind.config.js ./
-COPY postcss.config.js ./
-COPY components.json ./
-COPY eslint.config.js ./
-
-# Copy index.html
-COPY index.html ./
-
-# Copy source directories
-COPY src/ ./src/
-COPY public/ ./public/
+# Copy all necessary files and directories
+COPY . .
 
 # Build CSS to ensure Tailwind is properly compiled
 RUN pnpm run build:css || echo "No build:css script, using dev mode"
