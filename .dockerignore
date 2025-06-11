@@ -73,11 +73,3 @@ test_*.txt
 # Documentation
 README*.md
 *.md
-
-# Configuration files
-.eslintrc*
-.prettierrc*
-tsconfig*.json
-vite.config.*
-tailwind.config.*
-postcss.config.*
