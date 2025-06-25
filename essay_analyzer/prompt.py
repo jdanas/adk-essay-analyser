@@ -57,9 +57,13 @@ Output Format Requirements:
 You MUST respond with ONLY a valid JSON object in this exact format:
 {
   "grammarFeedback": "Detailed, specific grammar feedback with examples",
+  "grammarRating": 4,
   "structureFeedback": "Detailed structural analysis with specific suggestions", 
+  "structureRating": 3,
   "contentFeedback": "Thorough content evaluation with constructive advice",
+  "contentRating": 5,
   "spellingFeedback": "Specific spelling and mechanical issues identified",
+  "spellingRating": 4,
   "overallScore": 85
 }
 
@@ -71,6 +75,13 @@ Guidelines for Feedback:
 - Focus on the most important issues first
 - Consider the apparent skill level of the writer
 - Acknowledge strengths as well as areas for improvement
+
+Star Rating Criteria (1-5):
+- 5 stars: Exceptional quality, little to no improvement needed
+- 4 stars: Strong performance with minor improvements possible
+- 3 stars: Adequate quality with several areas for improvement
+- 2 stars: Needs significant improvement, notable issues present
+- 1 star: Major issues requiring comprehensive revision
 
 Scoring Criteria (0-100):
 - 90-100: Exceptional quality with minor issues

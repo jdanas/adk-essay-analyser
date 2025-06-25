@@ -66,9 +66,13 @@ class EssayAnalysisRequest(BaseModel):
 
 class EssayAnalysisResponse(BaseModel):
     grammarFeedback: str
+    grammarRating: int
     structureFeedback: str
+    structureRating: int
     contentFeedback: str
+    contentRating: int
     spellingFeedback: str
+    spellingRating: int
     overallScore: int
     session_id: Optional[str] = None
 
@@ -191,10 +195,18 @@ def parse_analysis_response(response_text: str) -> Dict[str, Any]:
         result = json.loads(cleaned_response)
         
         # Validate required fields
-        required_fields = ["grammarFeedback", "structureFeedback", "contentFeedback", "spellingFeedback", "overallScore"]
+        required_fields = ["grammarFeedback", "grammarRating", "structureFeedback", 
+                           "structureRating", "contentFeedback", "contentRating", 
+                           "spellingFeedback", "spellingRating", "overallScore"]
         for field in required_fields:
             if field not in result:
                 raise ValueError(f"Missing required field: {field}")
+        
+        # Ensure ratings are integers between 1-5
+        rating_fields = ["grammarRating", "structureRating", "contentRating", "spellingRating"]
+        for field in rating_fields:
+            if not isinstance(result[field], (int)) or result[field] < 1 or result[field] > 5:
+                result[field] = max(1, min(5, int(round(result.get(field, 3)))))
         
         # Ensure overallScore is a number
         if not isinstance(result["overallScore"], (int, float)):
@@ -210,9 +222,13 @@ def parse_analysis_response(response_text: str) -> Dict[str, Any]:
         # Fallback response if JSON parsing fails
         return {
             "grammarFeedback": "Unable to parse detailed grammar feedback from analysis.",
+            "grammarRating": 3,
             "structureFeedback": "Unable to parse detailed structure feedback from analysis.",
+            "structureRating": 3,
             "contentFeedback": "Unable to parse detailed content feedback from analysis.",
+            "contentRating": 3,
             "spellingFeedback": "Unable to parse detailed spelling feedback from analysis.",
+            "spellingRating": 3,
             "overallScore": 50
         }
 

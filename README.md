@@ -1,4 +1,5 @@
 # Essay Analyzer with Google ADK Integration
+<img width="2030" alt="esssay-adk-screenshot" src="https://github.com/user-attachments/assets/24b8c36f-e80d-4816-84e4-3b83cb227aec" />
 
 ## Overview
 
