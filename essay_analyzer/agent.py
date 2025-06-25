@@ -22,7 +22,7 @@ from .sub_agents.content_analyzer import content_analyzer_agent
 from .sub_agents.grammar_analyzer import grammar_analyzer_agent
 from .sub_agents.structure_analyzer import structure_analyzer_agent
 
-MODEL = "gemini-2.5-flash-preview-05-20"
+MODEL = "gemini-2.5-flash"
 
 essay_coordinator = LlmAgent(
     name="essay_coordinator",
