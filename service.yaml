@@ -1,0 +1,52 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: essay-analyzer
+  annotations:
+    run.googleapis.com/launch-stage: BETA
+spec:
+  template:
+    metadata:
+      annotations:
+        run.googleapis.com/container-dependencies: '{"frontend":["api-server"], "api-server":["adk-api"]}'
+    spec:
+      containers:
+        # Ingress Container: Frontend (Nginx proxy)
+        - image: us-central1-docker.pkg.dev/adk-essay-analyser-gaa/adk-repo/frontend:latest
+          name: frontend
+          ports:
+            - containerPort: 8080
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 512Mi
+
+        # Sidecar 1: Node.js API Server
+        - image: us-central1-docker.pkg.dev/adk-essay-analyser-gaa/adk-repo/api-server:latest
+          name: api-server
+          env:
+            - name: PORT
+              value: "3001"
+            - name: ADK_API_URL
+              value: "http://localhost:8000"
+            - name: NODE_ENV
+              value: "production"
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 512Mi
+
+        # Sidecar 2: Python ADK API
+        - image: us-central1-docker.pkg.dev/adk-essay-analyser-gaa/adk-repo/adk-api:latest
+          name: adk-api
+          env:
+            - name: PORT
+              value: "8000"
+            - name: HOST
+              value: "0.0.0.0"
+            - name: GOOGLE_GENAI_API_KEY
+              value: "AIzaSyBg6ZP3NNoUShuSjdnCSnXsKC7RgWMvQGE"
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 1024Mi

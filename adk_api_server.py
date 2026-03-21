@@ -252,6 +252,6 @@ if __name__ == "__main__":
         "adk_api_server:app",
         host=host,
         port=port,
-        reload=True,
+        reload=False,
         log_level="info"
     )

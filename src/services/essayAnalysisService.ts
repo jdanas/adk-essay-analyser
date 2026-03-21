@@ -13,7 +13,7 @@ interface ApiErrorResponse {
 export class EssayAnalysisService {
   private readonly baseUrl: string;
 
-  constructor(baseUrl: string = 'http://localhost:3001') {
+  constructor(baseUrl: string = import.meta.env.VITE_API_URL || '') {
     this.baseUrl = baseUrl;
   }
 
