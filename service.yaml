@@ -31,6 +31,12 @@ spec:
               value: "http://localhost:8000"
             - name: NODE_ENV
               value: "production"
+          startupProbe:
+            httpGet:
+              path: /api/health
+              port: 3001
+            periodSeconds: 10
+            failureThreshold: 3
           resources:
             limits:
               cpu: 1000m
@@ -46,6 +52,12 @@ spec:
               value: "0.0.0.0"
             - name: GOOGLE_GENAI_API_KEY
               value: "AIzaSyDgHEkeFV36q-E7gWC49NbVcveop0ecWo4"
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            periodSeconds: 10
+            failureThreshold: 5
           resources:
             limits:
               cpu: 1000m

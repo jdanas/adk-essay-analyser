@@ -33,21 +33,25 @@ gcloud artifacts repositories create $REPO_NAME \
     --description="Docker repository for ADK Essay Analyzer" \
     --quiet || echo "Repository already exists"
 
+# Wait a moment for the registry to be fully ready
+echo "⏳ Waiting for Artifact Registry to initialize..."
+sleep 5
+
 # Configure Docker to use gcloud as a credential helper
 echo "🔐 Configuring Docker authentication..."
 gcloud auth configure-docker $REGION-docker.pkg.dev --quiet
 
 # Build and Push images
 echo "🏗️  Building and Pushing Frontend..."
-docker build -t $REGION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/frontend:latest -f Dockerfile.frontend .
+docker build --platform linux/amd64 -t $REGION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/frontend:latest -f Dockerfile.frontend .
 docker push $REGION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/frontend:latest
 
 echo "🏗️  Building and Pushing Node API..."
-docker build -t $REGION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/api-server:latest -f Dockerfile.api .
+docker build --platform linux/amd64 -t $REGION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/api-server:latest -f Dockerfile.api .
 docker push $REGION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/api-server:latest
 
 echo "🏗️  Building and Pushing ADK Python API..."
-docker build -t $REGION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/adk-api:latest -f Dockerfile.adk .
+docker build --platform linux/amd64 -t $REGION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/adk-api:latest -f Dockerfile.adk .
 docker push $REGION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/adk-api:latest
 
 # Deploy to Cloud Run
