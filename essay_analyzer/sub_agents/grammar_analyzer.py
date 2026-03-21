@@ -16,7 +16,7 @@
 
 from google.adk.agents.llm_agent import LlmAgent
 
-MODEL = "gemini-2.5-flash-preview-05-20"
+MODEL = "gemini-2.5-flash"
 
 grammar_analyzer_agent = LlmAgent(
     name="grammar_analyzer",
