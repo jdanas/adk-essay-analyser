@@ -45,7 +45,7 @@ spec:
             - name: HOST
               value: "0.0.0.0"
             - name: GOOGLE_GENAI_API_KEY
-              value: "AIzaSyBg6ZP3NNoUShuSjdnCSnXsKC7RgWMvQGE"
+              value: "AIzaSyDgHEkeFV36q-E7gWC49NbVcveop0ecWo4"
           resources:
             limits:
               cpu: 1000m
