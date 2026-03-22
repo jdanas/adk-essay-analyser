@@ -35,7 +35,7 @@ export function EssayAnalyzer({
     setError(null);
 
     try {
-      const response = await fetch("http://localhost:3001/api/analyze-essay", {
+      const response = await fetch("/api/analyze-essay", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

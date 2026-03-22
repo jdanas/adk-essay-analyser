@@ -20,4 +20,4 @@ RUN pnpm run build:server || echo "No build script found"
 EXPOSE 3001
 
 # Start the Express API server
-CMD ["pnpm", "run", "start:server"]
+CMD ["pnpm", "run", "server"]

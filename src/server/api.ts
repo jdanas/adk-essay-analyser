@@ -78,18 +78,16 @@ const callAdkAnalyzer = async (
     };
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
+      const status = error.response?.status || 500;
+      const data = error.response?.data;
+      const details = typeof data === 'object' ? JSON.stringify(data) : data || error.message;
+      
       if (error.code === "ECONNREFUSED") {
         throw new Error(
-          "ADK API server is not running. Please start the Python ADK server first."
+          "ADK API server is not reachable at " + ADK_API_URL + ". Ensure the sidecar container is running."
         );
       }
-      if (error.response) {
-        throw new Error(
-          `ADK API error: ${error.response.status} - ${
-            error.response.data?.detail || error.message
-          }`
-        );
-      }
+      throw new Error(`ADK API error (${status}): ${details}`);
     }
     throw error;
   }

@@ -41,18 +41,23 @@ sleep 5
 echo "🔐 Configuring Docker authentication..."
 gcloud auth configure-docker $REGION-docker.pkg.dev --quiet
 
-# Build and Push images
-echo "🏗️  Building and Pushing Frontend..."
-docker build --platform linux/amd64 -t $REGION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/frontend:latest -f Dockerfile.frontend .
-docker push $REGION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/frontend:latest
+# Generate a unique tag based on timestamp
+TAG=$(date +%Y%m%d%H%M%S)
 
-echo "🏗️  Building and Pushing Node API..."
-docker build --platform linux/amd64 -t $REGION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/api-server:latest -f Dockerfile.api .
-docker push $REGION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/api-server:latest
+# Build and Push images using buildx with unique tags
+echo "🏗️  Building and Pushing Frontend (Tag: $TAG)..."
+docker buildx build --platform linux/amd64 --provenance=false --push -t $REGION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/frontend:$TAG -f Dockerfile.frontend .
 
-echo "🏗️  Building and Pushing ADK Python API..."
-docker build --platform linux/amd64 -t $REGION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/adk-api:latest -f Dockerfile.adk .
-docker push $REGION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/adk-api:latest
+echo "🏗️  Building and Pushing Node API (Tag: $TAG)..."
+docker buildx build --platform linux/amd64 --provenance=false --push -t $REGION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/api-server:$TAG -f Dockerfile.api .
+
+echo "🏗️  Building and Pushing ADK Python API (Tag: $TAG)..."
+docker buildx build --platform linux/amd64 --provenance=false --push -t $REGION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/adk-api:$TAG -f Dockerfile.adk .
+
+# Update service.yaml with the new tags
+sed -i '' "s|frontend:.*|frontend:$TAG|g" service.yaml
+sed -i '' "s|api-server:.*|api-server:$TAG|g" service.yaml
+sed -i '' "s|adk-api:.*|adk-api:$TAG|g" service.yaml
 
 # Deploy to Cloud Run
 echo "🌩️  Deploying Multi-Container Service to Cloud Run..."
