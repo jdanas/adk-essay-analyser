@@ -1,3 +1,6 @@
+# Service definition for Google Cloud Run
+# This file is used as a template. The GOOGLE_GENAI_API_KEY and TAG
+# are replaced by the deployment script using values from your .env file.
 apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
@@ -14,7 +17,7 @@ spec:
       timeoutSeconds: 300
       containers:
         # Ingress Container: Frontend (Nginx proxy)
-        - image: us-central1-docker.pkg.dev/adk-essay-analyser-gaa/adk-repo/frontend:20260321174029
+        - image: us-central1-docker.pkg.dev/adk-essay-analyser-gaa/adk-repo/frontend:TAG_PLACEHOLDER
           name: frontend
           ports:
             - containerPort: 8080
@@ -31,7 +34,7 @@ spec:
               memory: 512Mi
 
         # Sidecar 1: Node.js API Server
-        - image: us-central1-docker.pkg.dev/adk-essay-analyser-gaa/adk-repo/api-server:20260321174029
+        - image: us-central1-docker.pkg.dev/adk-essay-analyser-gaa/adk-repo/api-server:TAG_PLACEHOLDER
           name: api-server
           env:
             - name: PORT
@@ -53,7 +56,7 @@ spec:
               memory: 1024Mi
 
         # Sidecar 2: Python ADK API
-        - image: us-central1-docker.pkg.dev/adk-essay-analyser-gaa/adk-repo/adk-api:20260321174029
+        - image: us-central1-docker.pkg.dev/adk-essay-analyser-gaa/adk-repo/adk-api:TAG_PLACEHOLDER
           name: adk-api
           env:
             - name: PORT
@@ -61,9 +64,9 @@ spec:
             - name: HOST
               value: "0.0.0.0"
             - name: GOOGLE_GENAI_API_KEY
-              value: "AIzaSyDgHEkeFV36q-E7gWC49NbVcveop0ecWo4"
+              value: "GOOGLE_GENAI_API_KEY_PLACEHOLDER"
             - name: GOOGLE_API_KEY
-              value: "AIzaSyDgHEkeFV36q-E7gWC49NbVcveop0ecWo4"
+              value: "GOOGLE_GENAI_API_KEY_PLACEHOLDER"
           startupProbe:
             httpGet:
               path: /health

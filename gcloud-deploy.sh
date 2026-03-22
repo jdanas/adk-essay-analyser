@@ -5,18 +5,27 @@
 
 set -e
 
+# Load environment variables from .env
+if [ -f .env ]; then
+    echo "🔑 Loading environment variables from .env..."
+    # Export variables from .env for substitution
+    export $(grep -v '^#' .env | xargs)
+else
+    echo "❌ .env file not found. Please create one with GOOGLE_GENAI_API_KEY."
+    exit 1
+fi
+
 PROJECT_ID="adk-essay-analyser-gaa"
 REGION="us-central1"
 REPO_NAME="adk-repo"
 
-echo "🚀 Starting Google Cloud Deployment for $PROJECT_ID in $REGION"
-echo "============================================================"
-
-# Check for gcloud
-if ! command -v gcloud &> /dev/null; then
-    echo "❌ gcloud CLI not found. Please install it and authenticate first."
+if [ -z "$GOOGLE_GENAI_API_KEY" ]; then
+    echo "❌ GOOGLE_GENAI_API_KEY is not set in your .env file."
     exit 1
 fi
+
+echo "🚀 Starting Google Cloud Deployment for $PROJECT_ID in $REGION"
+echo "============================================================"
 
 # Set project
 gcloud config set project $PROJECT_ID
@@ -32,10 +41,6 @@ gcloud artifacts repositories create $REPO_NAME \
     --location=$REGION \
     --description="Docker repository for ADK Essay Analyzer" \
     --quiet || echo "Repository already exists"
-
-# Wait a moment for the registry to be fully ready
-echo "⏳ Waiting for Artifact Registry to initialize..."
-sleep 5
 
 # Configure Docker to use gcloud as a credential helper
 echo "🔐 Configuring Docker authentication..."
@@ -54,14 +59,23 @@ docker buildx build --platform linux/amd64 --provenance=false --push -t $REGION-
 echo "🏗️  Building and Pushing ADK Python API (Tag: $TAG)..."
 docker buildx build --platform linux/amd64 --provenance=false --push -t $REGION-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/adk-api:$TAG -f Dockerfile.adk .
 
-# Update service.yaml with the new tags
-sed -i '' "s|frontend:.*|frontend:$TAG|g" service.yaml
-sed -i '' "s|api-server:.*|api-server:$TAG|g" service.yaml
-sed -i '' "s|adk-api:.*|adk-api:$TAG|g" service.yaml
+# Generate a temporary service.yaml with placeholders replaced
+echo "📝 Generating temporary service.yaml..."
+cp service.yaml service.tmp.yaml
 
-# Deploy to Cloud Run
+# Replace TAG_PLACEHOLDER with the actual tag
+sed -i '' "s/TAG_PLACEHOLDER/$TAG/g" service.tmp.yaml
+
+# Replace GOOGLE_GENAI_API_KEY_PLACEHOLDER with the key from .env
+# Using | as a delimiter in case the key contains /
+sed -i '' "s|GOOGLE_GENAI_API_KEY_PLACEHOLDER|$GOOGLE_GENAI_API_KEY|g" service.tmp.yaml
+
+# Deploy to Cloud Run using the temporary file
 echo "🌩️  Deploying Multi-Container Service to Cloud Run..."
-gcloud run services replace service.yaml --region $REGION
+gcloud run services replace service.tmp.yaml --region $REGION
+
+# Clean up temporary file
+rm service.tmp.yaml
 
 # Get the URL
 SERVICE_URL=$(gcloud run services describe essay-analyzer --region $REGION --format='value(status.url)')
